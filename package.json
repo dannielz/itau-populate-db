@@ -1,0 +1,24 @@
+{
+  "name": "populatedb",
+  "version": "1.0.0",
+  "description": "server to connect and populate database using twitterconsumer module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dannielz/itau-populate-db.git"
+  },
+  "author": "Danniel Sebastião Dias",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dannielz/itau-populate-db/issues"
+  },
+  "homepage": "https://github.com/dannielz/itau-populate-db#readme",
+  "dependencies": {
+    "dotenv": "^6.0.0",
+    "mysql": "^2.16.0",
+    "twitterconsumer": "github:dannielz/itau-twitter-consumer#master"
+  }
+}
