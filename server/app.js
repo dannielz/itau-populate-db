@@ -42,13 +42,13 @@ var consume = function (hashtag, callback) {
             data.tables.users.push(user);
             data.tables.tweets.push(tweet);
         });
-        db.bulkInsertTable( data.tables.users, 'users', (err, result) => {
+        db.bulkInsertTable(data.tables.users, 'users', (err, result) => {
             if (err) {
                 callback(err, result);
                 return;
             }
             console.log("Data inserted on table users affected rows: " + result.affectedRows);
-            db.bulkInsertTable( data.tables.tweets, 'tweets', (err, result) => {
+            db.bulkInsertTable(data.tables.tweets, 'tweets', (err, result) => {
                 if (err) {
                     callback(err, result)
                     return;
@@ -61,20 +61,22 @@ var consume = function (hashtag, callback) {
     });
 
 }
-var consumeArray = function (array, index, callback) {
-    if (index >= array.length) {
-        callback(null, "success");
-        return;
-    }
-    consume(array[index], (err, result) => {
-        if (err) {
-            callback(err);
-            return;
-        }
-        console.log("Inserted hashtag " + array[index]);
-        consumeArray(array, index + 1, callback);
-    })
+var consumeArray = function (hashtags, callback) {
+    var hashtagsProcessed = 0;
+    hashtags.forEach(hashtag => {
+        consume(hashtag, (err, result) => {
+            if (err) {
+                callback(err);
+                return;
+            }
+            hashtagsProcessed++;
+            console.log("Inserted hashtag " + hashtag);
+            if(hashtagsProcessed >= hashtags.length) {
+                callback(null);
+            }
+        });
 
+    });
 }
 hashtags = [
     "#openbanking",
@@ -95,15 +97,15 @@ var client = new twitterconsumer({
     consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
 })
 
-db.connect((err)=>{
-    if(err) throw err;
+db.connect((err) => {
+    if (err) throw err;
     db.drop(db.tables, 0, (err) => {
         if (err) throw err;
         console.log("Tables dropped")
         db.create((err, result) => {
             if (err) throw err;
             console.log("Tables created")
-            consumeArray(hashtags, 0, (err, result) => {
+            consumeArray(hashtags, (err, result) => {
                 if (err) throw err;
                 console.log("Finished Insertion");
                 process.exit();
